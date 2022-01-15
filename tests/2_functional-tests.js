@@ -13,6 +13,28 @@ const isObject = (obj) => {
 
 suite('Functional Tests', function() {
 
+  /*
+  * ----[EXAMPLE TEST]----
+  * Each test should completely test the response of the API end-point including response status code!
+  */
+  test('#example Test GET /api/books', function(done){
+     chai.request(server)
+      .get('/api/books')
+      .end(function(err, res){
+        assert.equal(res.status, 200);
+        assert.isArray(res.body, 'response should be an array');
+        assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
+        assert.property(res.body[0], 'title', 'Books in array should contain title');
+        assert.property(res.body[0], '_id', 'Books in array should contain _id');
+        done();
+      });
+  });
+  /*
+  * ----[END of EXAMPLE TEST]----
+  */
+
+
+
   suite('Routing tests', function() {
 
 
@@ -43,6 +65,7 @@ suite('Functional Tests', function() {
             .send(data)
             .end( (err, res) => {
               assert.notExists(res.body._id)
+              assert.equal(res.text, 'missing required field title')
               done();
             })
 
@@ -58,7 +81,11 @@ suite('Functional Tests', function() {
         chai.request(server)
             .get('/api/books')
             .end( (err, res) => {
-              assert.isArray(res.body)
+              assert.equal(res.status, 200);
+              assert.isArray(res.body, 'response should be an array');
+              assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
+              assert.property(res.body[0], 'title', 'Books in array should contain title');
+              assert.property(res.body[0], '_id', 'Books in array should contain _id');
               done();
             })
 
@@ -74,6 +101,7 @@ suite('Functional Tests', function() {
         chai.request(server)
             .get('/api/books/123')
             .end( (err, res) => {
+              assert.equal(res.text, 'no book exists')
               done();
             })
 
@@ -127,7 +155,6 @@ suite('Functional Tests', function() {
             .send(data)
             .end( (err, res) => {
                 assert.equal(res.text, 'missing required field comment')
-                assert.isTrue(true);
                 done();
             })
 
@@ -141,7 +168,6 @@ suite('Functional Tests', function() {
             .send(data)
             .end( (err, res) => {
                 assert.equal(res.text, 'no book exists')
-                assert.isTrue(true);
                 done();
             })
       });
